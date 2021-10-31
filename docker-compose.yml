@@ -1,0 +1,47 @@
+version: '3.5'
+services:
+  db:
+    container_name: sql_playground
+    image: postgres
+    restart: "no"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - db_network
+
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: "no"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'True'
+      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: admin
+      POSTGRES_DB: postgres
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    command: echo "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
+    volumes:
+      - ./sql/sql_solutions.sql:/pgadmin4/sql_solutions.sql
+      - ./servers.json:/pgadmin4/servers.json
+     # - ./sql/sql_solutions.sql:/var/lib/pgadmin4/storage/admin/sql_solutions.sql
+    networks:
+      - db_network
+    #command: echo "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTt" && \
+    #  /bin/sh -c "echo /var/lib/pgadmin4/storage/admin_admin.com/sql_solutions.sql"
+
+networks: 
+  db_network:
+    driver: bridge
+
+
